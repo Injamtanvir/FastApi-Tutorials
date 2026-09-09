@@ -20,6 +20,22 @@ SQLALCHEMY_DATABASE_URL = os.getenv(
     "sqlite:///./expenses.db"
 )
 
+# Hosting providers (Render, Railway, Heroku, etc.) commonly hand out
+# Postgres URLs starting with "postgres://" or plain "postgresql://".
+# SQLAlchemy defaults *either* of those to the psycopg2 driver, which we
+# never install (we use psycopg v3 instead). Rather than relying on every
+# environment variable being typed exactly right, we normalize the scheme
+# here in code so the app always ends up using the psycopg v3 driver no
+# matter what format the URL arrives in.
+if SQLALCHEMY_DATABASE_URL.startswith("postgres://"):
+    SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL.replace(
+        "postgres://", "postgresql+psycopg://", 1
+    )
+elif SQLALCHEMY_DATABASE_URL.startswith("postgresql://"):
+    SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL.replace(
+        "postgresql://", "postgresql+psycopg://", 1
+    )
+
 # connect_args is only needed for SQLite (it disallows multi-thread access
 # by default). Postgres doesn't need this, so we add it conditionally.
 connect_args = {"check_same_thread": False} if SQLALCHEMY_DATABASE_URL.startswith("sqlite") else {}
