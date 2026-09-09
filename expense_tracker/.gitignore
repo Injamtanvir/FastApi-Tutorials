@@ -1,0 +1,15 @@
+# Secrets — never commit your real .env
+.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Local SQLite fallback DB
+expenses.db
+
+# Editor/OS junk
+.vscode/
+.DS_Store

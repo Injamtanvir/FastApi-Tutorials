@@ -1,11 +1,4 @@
 {
-    "E001": {
-        "name": "Grocery Shopping",
-        "amount": 2500,
-        "category": "Food",
-        "date": "2026-08-01",
-        "description": "Monthly grocery shopping"
-    },
     "E002": {
         "name": "Uber Ride",
         "amount": 450,

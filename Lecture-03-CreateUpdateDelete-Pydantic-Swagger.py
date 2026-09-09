@@ -16,7 +16,7 @@ def save_data(data):
         json.dump(data, file, indent=4) # josn.dump() function is used to write the data to the file in JSON format. The indent parameter is used to format the JSON data with indentation for better readability.
 
 
-# Validation korar jonno Class
+# For Validation Class
 class Expense(BaseModel):
     id: Annotated[str, Field(..., description="The unique ID of the expense", example='E001')]  # Annotated is used to provide additional metadata for the field, such as description and example.
     name: Annotated[str, Field(..., description="The name of the expense", example='Lunch')]
@@ -25,7 +25,7 @@ class Expense(BaseModel):
     category: Annotated[str, Field(..., description="The category of the expense", example='Food')]
     description: Annotated[str, Field(..., description="The description of the expense", example='Lunch at restaurant')]
 
-# Used for update request, jekhane amra optional field use korbo, karon update request e sob gulo field thakbe na. Tai amra Optional type use korbo.
+# Used for update request, wherever optional field needs to use, Cause, update request doesn't need all field. That's why Optional type have to use.
 class ExpenseUpdate(BaseModel):
     name: Annotated[Optional[str], Field(description="The name of the expense", example='Lunch', default=None)]    # Default value None means that if the field is not provided in the input data, it will be set to None. This is useful for update requests, where we may not want to update all fields of the expense.
     amount: Annotated[Optional[float], Field(description="The amount of the expense", example=100.0, default=None)]
@@ -66,7 +66,7 @@ def view_sorted_expense(sorted_by: str, order: str):
 
 
 # Create 
-# post, put, delete request view kora jabe na
+# post, put, delete --> here can't request view
 @app.post("/create")  # Ekhon Input er onek gulo data thakbe, tai amra Pydantic model use korbo. Ekhane amra Expense class ke use korbo, ja amader input data ke validate korbe.
 def create_expense(expense: Expense):    # Expense class er object hisebe expense parameter ke receive korbo. Ekhane amra Expense class er object ke use kore input data ke validate korbo.
     data = load_data()
@@ -74,11 +74,8 @@ def create_expense(expense: Expense):    # Expense class er object hisebe expens
         raise HTTPException(status_code=400, detail="Expense ID already exists")
     data[expense.id] = expense.model_dump(exclude=['id'])   # model_dump() method is used to convert the Pydantic model instance into a dictionary. The exclude parameter is used to exclude the id field from the dictionary, since we don't want to store it in the JSON file.
     save_data(data)                                          # exclude=['id'] means that the id field will not be included in the dictionary representation of the Expense object. This is because we are using the id as the key in the JSON file, so we don't need to store it as a separate field in the value.
-
-
-
-
 # Corner Case ager Data gulo ke override kore felse ei way te
+
 
 #update
 @app.put("/edit/{expense_id}")
@@ -101,14 +98,6 @@ def delete_expense(expense_id: str):
     del data[expense_id]
     save_data(data)
     return {"message": "Expense deleted successfully"}
-
-
-
-
-
-
-
-
 
 
 # uvicorn main:app --reload  
